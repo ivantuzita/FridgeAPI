@@ -1,6 +1,6 @@
-﻿using FridgeAPI.Models;
+﻿using FridgeAPI.Data;
+using FridgeAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace FridgeAPI.Controllers;
 
@@ -8,22 +8,26 @@ namespace FridgeAPI.Controllers;
 [Route("[controller]")]
 public class FridgeController: ControllerBase
 {
-    private static List<Ingredient> ingredients = new List<Ingredient>();
-    private static int id = 0;
+
+    private IngredientContext _context;
+
+    public FridgeController(IngredientContext context) {
+        _context = context;
+    }
 
     [HttpPost]
     public IActionResult addIngredient([FromBody] Ingredient ingredient) {
-        ingredient.Id = id++;
-        ingredients.Add(ingredient);
+        _context.Ingredients.Add(ingredient);
+        _context.SaveChanges();
         return CreatedAtAction(nameof(getIngredientById), new {id = ingredient.Id}, ingredient);
     }
 
     [HttpGet]
-    public IEnumerable<Ingredient> getIngredients() { return ingredients; }
+    public IEnumerable<Ingredient> getIngredients() { return _context.Ingredients; }
 
     [HttpGet("{id}")]
     public IActionResult getIngredientById(int id) {
-        var ingredient = ingredients.FirstOrDefault(Ingredient => Ingredient.Id == id);
+        var ingredient = _context.Ingredients.FirstOrDefault(Ingredient => Ingredient.Id == id);
         if (ingredient == null) return NotFound();
         return Ok(ingredient);
     }
