@@ -7,6 +7,8 @@ var connectionString = builder.Configuration.GetConnectionString("IngredientConn
 
 builder.Services.AddDbContext<IngredientContext>(opts =>
 opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add services to the container.
 
 builder.Services.AddControllers();
