@@ -36,4 +36,22 @@ public class FridgeController: ControllerBase
         if (ingredient == null) return NotFound();
         return Ok(ingredient);
     }
+
+    [HttpPut("{id}")]
+    public IActionResult updateIngredient(int id, [FromBody] UpdateIngredientDTO ingredientDTO) {
+        var ingredient = _context.Ingredients.FirstOrDefault(ingredient => ingredient.Id == id);
+        if (ingredient == null) return NotFound();
+        _mapper.Map(ingredientDTO, ingredient);
+        _context.SaveChanges();
+        return NoContent();
+    }
+
+    [HttpPatch("{id}")]
+    public IActionResult patchIngredient(int id, ) {
+        var ingredient = _context.Ingredients.FirstOrDefault(ingredient => ingredient.Id == id);
+        if (ingredient == null) return NotFound();
+        _mapper.Map(ingredientDTO, ingredient);
+        _context.SaveChanges();
+        return NoContent();
+    }
 }
