@@ -2,6 +2,7 @@
 using FridgeAPI.Data;
 using FridgeAPI.Data.DTOs;
 using FridgeAPI.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FridgeAPI.Controllers;
@@ -47,10 +48,19 @@ public class FridgeController: ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public IActionResult patchIngredient(int id, ) {
+    public IActionResult patchIngredient(int id, JsonPatchDocument<UpdateIngredientDTO> patch) {
         var ingredient = _context.Ingredients.FirstOrDefault(ingredient => ingredient.Id == id);
         if (ingredient == null) return NotFound();
-        _mapper.Map(ingredientDTO, ingredient);
+
+        var ingredientToUpdate = _mapper.Map<UpdateIngredientDTO>(ingredient);
+
+        patch.ApplyTo(ingredientToUpdate, ModelState);
+
+        if (!TryValidateModel(ingredientToUpdate)) {
+            return ValidationProblem(ModelState);
+        }
+
+        _mapper.Map(ingredientToUpdate, ingredient);
         _context.SaveChanges();
         return NoContent();
     }

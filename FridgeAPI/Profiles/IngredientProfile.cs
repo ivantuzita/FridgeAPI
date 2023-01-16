@@ -8,5 +8,6 @@ public class IngredientProfile: Profile {
     public IngredientProfile() {
         CreateMap<CreateIngredientDTO, Ingredient>();
         CreateMap<UpdateIngredientDTO, Ingredient>();
+        CreateMap<Ingredient, UpdateIngredientDTO>();
     }
 }
