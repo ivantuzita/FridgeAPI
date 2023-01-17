@@ -29,13 +29,14 @@ public class FridgeController: ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<Ingredient> getIngredients() { return _context.Ingredients; }
+    public IEnumerable<ReadIngredientDTO> getIngredients() { return _mapper.Map<List<ReadIngredientDTO>>(_context.Ingredients); }
 
     [HttpGet("{id}")]
     public IActionResult getIngredientById(int id) {
         var ingredient = _context.Ingredients.FirstOrDefault(Ingredient => Ingredient.Id == id);
         if (ingredient == null) return NotFound();
-        return Ok(ingredient);
+        var ingredientDTO = _mapper.Map<ReadIngredientDTO>(ingredient);
+        return Ok(ingredientDTO);
     }
 
     [HttpPut("{id}")]
@@ -61,6 +62,16 @@ public class FridgeController: ControllerBase
         }
 
         _mapper.Map(ingredientToUpdate, ingredient);
+        _context.SaveChanges();
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult deleteIngredient(int id)
+    {
+        var ingredient = _context.Ingredients.FirstOrDefault(ingredient => ingredient.Id == id);
+        if (ingredient == null) return NotFound();
+        _context.Remove(ingredient);
         _context.SaveChanges();
         return NoContent();
     }

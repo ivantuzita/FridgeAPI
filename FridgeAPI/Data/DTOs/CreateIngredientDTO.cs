@@ -7,4 +7,5 @@ public class CreateIngredientDTO {
     public string Content { get; set; }
     [Required(ErrorMessage = "There must be a valid number on the 'quantity' field.")]
     public int Quantity { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
